@@ -1,5 +1,19 @@
-
 from .tikzeng import *
+
+def alt_colors_block(layers, colors=["color1", "color2"]):
+    """
+    Block with alternating colors for
+    each layer
+    """
+    for i, layer in enumerate(layers):
+        fill_str = "fill="
+        i0 = layer.index(fill_str)
+        i1 = layer[i0:].index(",") + i0
+
+        layers[i] = layer.replace(layer[i0+len(fill_str):i1], colors[i % 2])
+    
+    return layers
+
 
 #define new block
 def block_2ConvPool( name, botton, top, s_filer=256, n_filer=64, offset="(1,0,0)", size=(32,32,3.5), opacity=0.5 ):
