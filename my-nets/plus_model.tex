@@ -1,0 +1,261 @@
+
+\documentclass[border=8pt, multi, tikz]{standalone}
+\usepackage{xcolor}
+\usepackage{import}
+\subimport{./layers/}{init}
+\usetikzlibrary{positioning}
+\usetikzlibrary{3d} %for including external image 
+
+\def\ConvColor{rgb:yellow,5;red,2.5;white,5}
+\def\ConvReluColor{rgb:yellow,5;red,5;white,5}
+\def\PoolColor{rgb:red,1;black,0.3}
+\def\UnpoolColor{rgb:blue,2;green,1;black,0.3}
+\def\FcColor{rgb:blue,5;red,2.5;white,5}
+\def\FcReluColor{rgb:blue,5;red,5;white,4}
+\def\SoftmaxColor{rgb:magenta,5;black,7}   
+\def\SumColor{rgb:blue,5;green,15}
+
+\definecolor{color1}{HTML}{A2C7EA}
+
+\definecolor{color2}{HTML}{357ABB}
+
+\newcommand{\mymidarrow}{\tikz \draw[-Stealth,line width=0.4mm,draw=\edgecolor] (-0.3,0) -- ++(0.3,0);}
+
+\begin{document}
+\begin{tikzpicture}
+
+\tikzstyle{connection}=[ultra thick,every node/.style={sloped,allow upside down},draw=\edgecolor,opacity=0.7]
+\tikzstyle{copyconnection}=[ultra thick,every node/.style={sloped,allow upside down},draw={rgb:blue,4;red,1;green,1;black,3},opacity=0.7]
+
+\pic[shift={(0,0,0)}] at (0,0,0)
+    {Box={
+        name=dense,
+        caption=,
+        xlabel={{, }},
+        zlabel=34,
+        fill=color1,
+        height=2,
+        width=2,
+        depth=34,
+        opacity=0.8,
+        }
+    };
+
+\pic[shift={(0,0,0)}] at (dense-east)
+    {Box={
+        name=batch_norm,
+        caption=Dense stack 1,
+        xlabel={{, }},
+        zlabel=34,
+        fill=color2,
+        height=2,
+        width=2,
+        depth=34,
+        opacity=0.8,
+        }
+    };
+
+\pic[shift={(0,0,0)}] at (batch_norm-east)
+    {Box={
+        name=relu,
+        caption=,
+        xlabel={{, }},
+        zlabel=34,
+        fill=color1,
+        height=2,
+        width=2,
+        depth=34,
+        opacity=0.8,
+        }
+    };
+
+\pic[shift={(0,0,0)}] at (relu-east)
+    {Box={
+        name=dropout,
+        caption=,
+        xlabel={{, }},
+        zlabel=34,
+        fill=color2,
+        height=2,
+        width=2,
+        depth=34,
+        opacity=0.8,
+        }
+    };
+
+\draw [connection]  (dropout-east) -- node {\mymidarrow} (3,0,0);
+
+\pic[shift={(0,0,0)}] at (3,0,0)
+    {Box={
+        name=dense_1,
+        caption=,
+        xlabel={{, }},
+        zlabel=38,
+        fill=color1,
+        height=2,
+        width=2,
+        depth=38,
+        opacity=0.8,
+        }
+    };
+
+\pic[shift={(0,0,0)}] at (dense_1-east)
+    {Box={
+        name=batch_norm_1,
+        caption=Dense stack 2,
+        xlabel={{, }},
+        zlabel=38,
+        fill=color2,
+        height=2,
+        width=2,
+        depth=38,
+        opacity=0.8,
+        }
+    };
+
+\pic[shift={(0,0,0)}] at (batch_norm_1-east)
+    {Box={
+        name=relu_1,
+        caption=,
+        xlabel={{, }},
+        zlabel=38,
+        fill=color1,
+        height=2,
+        width=2,
+        depth=38,
+        opacity=0.8,
+        }
+    };
+
+\pic[shift={(0,0,0)}] at (relu_1-east)
+    {Box={
+        name=dropout_1,
+        caption=,
+        xlabel={{, }},
+        zlabel=38,
+        fill=color2,
+        height=2,
+        width=2,
+        depth=38,
+        opacity=0.8,
+        }
+    };
+
+\draw [connection]  (dropout_1-east) -- node {\mymidarrow} (6,0,0);
+
+\pic[shift={(0,0,0)}] at (6,0,0)
+    {Box={
+        name=dense_2,
+        caption=,
+        xlabel={{, }},
+        zlabel=38,
+        fill=color1,
+        height=2,
+        width=2,
+        depth=38,
+        opacity=0.8,
+        }
+    };
+
+\pic[shift={(0,0,0)}] at (dense_2-east)
+    {Box={
+        name=batch_norm_2,
+        caption=Dense stack 3,
+        xlabel={{, }},
+        zlabel=38,
+        fill=color2,
+        height=2,
+        width=2,
+        depth=38,
+        opacity=0.8,
+        }
+    };
+
+\pic[shift={(0,0,0)}] at (batch_norm_2-east)
+    {Box={
+        name=relu_2,
+        caption=,
+        xlabel={{, }},
+        zlabel=38,
+        fill=color1,
+        height=2,
+        width=2,
+        depth=38,
+        opacity=0.8,
+        }
+    };
+
+\pic[shift={(0,0,0)}] at (relu_2-east)
+    {Box={
+        name=dropout_2,
+        caption=,
+        xlabel={{, }},
+        zlabel=38,
+        fill=color2,
+        height=2,
+        width=2,
+        depth=38,
+        opacity=0.8,
+        }
+    };
+
+\draw [connection]  (dropout_2-east) -- node {\mymidarrow} (9,0,0);
+
+\pic[shift={(0,0,0)}] at (9,0,0)
+    {Box={
+        name=dense_3,
+        caption=,
+        xlabel={{, }},
+        zlabel=8,
+        fill=color1,
+        height=2,
+        width=2,
+        depth=8,
+        opacity=0.8,
+        }
+    };
+
+\pic[shift={(0,0,0)}] at (dense_3-east)
+    {Box={
+        name=batch_norm_3,
+        caption=Dense stack 4,
+        xlabel={{, }},
+        zlabel=8,
+        fill=color2,
+        height=2,
+        width=2,
+        depth=8,
+        opacity=0.8,
+        }
+    };
+
+\pic[shift={(0,0,0)}] at (batch_norm_3-east)
+    {Box={
+        name=relu_3,
+        caption=,
+        xlabel={{, }},
+        zlabel=8,
+        fill=color1,
+        height=2,
+        width=2,
+        depth=8,
+        opacity=0.8,
+        }
+    };
+
+\pic[shift={(0,0,0)}] at (relu_3-east)
+    {Box={
+        name=dropout_3,
+        caption=,
+        xlabel={{, }},
+        zlabel=8,
+        fill=color2,
+        height=2,
+        width=2,
+        depth=8,
+        opacity=0.8,
+        }
+    };
+
+\end{tikzpicture}
+\end{document}
