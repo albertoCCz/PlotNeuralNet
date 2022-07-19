@@ -26,13 +26,16 @@ def to_cor():
 
 def to_begin():
     return r"""
-\newcommand{\mymidarrow}{\tikz \draw[-Stealth,line width=0.4mm,draw=\edgecolor] (-0.3,0) -- ++(0.3,0);}
+\newcommand{\mymidarrow}{\tikz \draw[-Stealth,line width=0.2mm,draw=\edgecolor,opacity=1] (-0.3,0) -- ++(0.3,0);}
 
 \begin{document}
 \begin{tikzpicture}
 
-\tikzstyle{connection}=[ultra thick,every node/.style={sloped,allow upside down},draw=\edgecolor,opacity=0.7]
+\tikzstyle{connection}=[thick,every node/.style={sloped,allow upside down},draw=\edgecolor,opacity=1]
 \tikzstyle{copyconnection}=[ultra thick,every node/.style={sloped,allow upside down},draw={rgb:blue,4;red,1;green,1;black,3},opacity=0.7]
+\tikzstyle{mynode}=[inner sep=0pt,minimum size=0mm]
+
+\def\skipshift{6.5}
 """
 
 # utils
@@ -47,22 +50,48 @@ def node(name, coords, text=""):
 \node ("""+ name +""") at """+ coords +""" {"""+ text +"""};
 """
 
-def gen_nodes(n_nodes, xspace=3):
+def gen_nodes(n_nodes, xspace=3, zoffset=0):
     """
-    Genarate a set of consecutive `n_nodes` with
-    a distance between them of `xspace`.
+    Generate a set of consecutive `n_nodes` with
+    a distance between them of `xspace`. Use
+    `zoffset` to set the z-coord of all gen nodes.
     """
     nodex = [*range(n_nodes)]
     if isinstance(xspace, int):
-        return {chr(ord('a') + i): f"({xspace*i},0,0)" for i in nodex}
+        return {chr(ord('a') + i): f"({xspace*i},0,{str(zoffset)}+\skipshift)" for i in nodex}
     elif isinstance(xspace, Sequence):
         return dict(
-            (chr(ord('a') + i), f"({xspace[i]+sum(xspace[:i])},0,0)")
+            (chr(ord('a') + i), f"({xspace[i]+sum(xspace[:i])},0,{str(zoffset)}+\skipshift)")
             if i >= 1 else
-            (chr(ord('a') + i), f"({xspace[i]},0,0)")
+            (chr(ord('a') + i), f"({xspace[i]},0,{str(zoffset)}+\skipshift)")
             for i in nodex)
     else:
         raise TypeError(f"`xspace` must be either int or Sequence, not {type(xspace)}")
+
+def apply_offset(offset, coord, nodes):
+    coord_index = {'x':0, 'y':1, 'z':2}[coord]
+    for k,v in nodes.items():
+        pos_list = v.strip('()').split(',')
+        pos_list[coord_index] = str(float(pos_list[coord_index].replace('+\skipshift', '')) + offset) + "+\skipshift"
+        nodes[k] = '(' + ','.join(pos_list) + ')'
+
+    return nodes
+
+def get_width(layer):
+    width_str = "width="
+    i0 = layer.index(width_str)
+    i1 = layer[i0:].index(",") + i0
+
+    return float(layer[i0+len(width_str):i1])
+
+def new_node_obj(name, at, style="mynode"):
+    return r"""
+\node["""+ str(style) +"""] ("""+ str(name) +""") at """+ str(at) +""" {};
+"""
+
+def get_node(nodes, idx):
+    ld = list(nodes.items())
+    return {ld[idx][0]:ld[idx][1]}
 
 # layers definition
 # =================
@@ -72,15 +101,15 @@ def to_input( pathfile, to='(-3,0,0)', width=8, height=8, name="temp"):
 """
 
 # Dense
-def to_Dense(name, size=64, offset="(0,0,0)", to="(0,0,0)", width=2, height=2, depth=34, caption=" ", opacity=.7):
+def to_Dense(name, size=64, offset="(0,0,0)", to="(0,0,0)", width=2, height=2, depth=34, caption=" ", color="\ConvColor", opacity=.7):
     return r"""
 \pic[shift={"""+ offset +"""}] at """+ to +"""
     {Box={
         name="""   + name         +""",
         caption="""+ caption      +""",
         xlabel={{, }},
-        zlabel=""" + str(size)    +""",
-        fill=\ConvColor,
+        zlabel=""" + str(size)    +r""",
+        fill="""   + str(color)  +""",
         height=""" + str(height)  +""",
         width="""  + str(width)   +""",
         depth="""  + str(depth)   +""",
@@ -127,15 +156,15 @@ def to_ConvConvRelu(name, s_filter=256, n_filter=(64,64), offset="(0,0,0)", to="
 """
 
 # Pool
-def to_Pool(name, s_pool=8, size=32, offset="(0,0,0)", to="(0,0,0)", width=1, height=32, depth=32, opacity=.7, caption=" "):
+def to_Pool(name, s_pool=8, size=32, offset="(0,0,0)", to="(0,0,0)", width=1, height=32, depth=32, color="\PoolColor", opacity=.7, caption=" "):
     return r"""
 \pic[shift={ """+ offset +""" }] at """+ to +""" 
     {Box={
         name="""   + name           +""",
         caption="""+ caption        +r""",
         xlabel={{"1x"""+ str(s_pool) +"""\",}},
-        zlabel=""" + str(size)      +""",
-        fill=\PoolColor,
+        zlabel=""" + str(size)      +r""",
+        fill="""   + str(color)     +""",
         opacity="""+ str(opacity)   +""",
         height=""" + str(height)    +""",
         width="""  + str(width)     +""",
@@ -235,6 +264,19 @@ def to_connection_node(of, to):
     return r"""
 \draw [connection]  ("""+of+"""-east) -- node {\mymidarrow} """+to+""";
 """
+
+def to_connection_nodes(nodes):
+    if len(nodes) <= 1:
+        raise ValueError(f"`nodes` must contain more than one node. Now it has {len(nodes)}.")
+    
+    lines = r"""
+\draw [connection] ("""+ nodes[0] +""")"""
+    for node in nodes[1:]:
+        lines = lines + """ -- node{\mymidarrow} (""" + node +""")"""
+    
+    return lines + """;
+"""
+
 
 def to_skip(of, to, pos=1.25):
     return r"""
