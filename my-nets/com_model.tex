@@ -1,0 +1,886 @@
+
+\documentclass[border=8pt, multi, tikz]{standalone}
+\usepackage{xcolor}
+\usepackage{import}
+\subimport{./layers/}{init}
+\usetikzlibrary{positioning}
+\usetikzlibrary{3d} %for including external image 
+
+\def\ConvColor{rgb:yellow,5;red,2.5;white,5}
+\def\ConvReluColor{rgb:yellow,5;red,5;white,5}
+\def\PoolColor{rgb:red,1;black,0.3}
+\def\UnpoolColor{rgb:blue,2;green,1;black,0.3}
+\def\FcColor{rgb:blue,5;red,2.5;white,5}
+\def\FcReluColor{rgb:blue,5;red,5;white,4}
+\def\SoftmaxColor{rgb:magenta,5;black,7}   
+\def\SumColor{rgb:blue,5;green,15}
+
+\definecolor{color1}{HTML}{A2C7EA}
+
+\definecolor{color2}{HTML}{357ABB}
+
+\definecolor{color_pool}{HTML}{F44724}
+
+\definecolor{dark_yellow}{HTML}{F9D046}
+
+\definecolor{forestgreen}{HTML}{24BB09}
+
+\newcommand{\mymidarrow}{\tikz \draw[-Stealth,line width=0.2mm,draw=\edgecolor,opacity=1] (-0.3,0) -- ++(0.3,0);}
+
+\begin{document}
+\begin{tikzpicture}
+
+\tikzstyle{connection}=[thick,every node/.style={sloped,allow upside down},draw=\edgecolor,opacity=1]
+\tikzstyle{copyconnection}=[ultra thick,every node/.style={sloped,allow upside down},draw={rgb:blue,4;red,1;green,1;black,3},opacity=0.7]
+\tikzstyle{mynode}=[inner sep=0pt,minimum size=0mm]
+
+\def\skipshift{6.5}
+
+\pic[shift={(0,0,0)}] at (-5.5+\skipshift,0,0+\skipshift) 
+    {Box={
+        name=conv1d_10,
+        caption=Conv stack 1,
+        xlabel={{"8@1x5", }},
+        zlabel=,
+        fill=\ConvColor,
+        height=2,
+        width=6,
+        depth=24,
+        opacity=0.7,
+        }
+    };
+
+\pic[shift={(0,0,0)}] at (conv1d_10-east)
+    {Box={
+        name=batch_norm_10,
+        caption=,
+        xlabel={{, }},
+        zlabel=,
+        fill=color1,
+        height=2,
+        width=2,
+        depth=24,
+        opacity=0.7,
+        }
+    };
+
+\pic[shift={(0,0,0)}] at (batch_norm_10-east)
+    {Box={
+        name=relu_10,
+        caption=,
+        xlabel={{, }},
+        zlabel=,
+        fill=color2,
+        height=2,
+        width=2,
+        depth=24,
+        opacity=0.7,
+        }
+    };
+
+\pic[shift={(0,0,0)}] at (relu_10-east)
+    {Box={
+        name=dropout_10,
+        caption=,
+        xlabel={{, }},
+        zlabel=24,
+        fill=color1,
+        height=2,
+        width=2,
+        depth=24,
+        opacity=0.7,
+        }
+    };
+
+\pic[shift={ (0,0,0) }] at (dropout_10-east) 
+    {Box={
+        name=maxpool_10,
+        caption= ,
+        xlabel={{"1x4",}},
+        zlabel=6,
+        fill=color_pool,
+        opacity=0.7,
+        height=2,
+        width=2,
+        depth=6
+        }
+    };
+
+\draw [connection]  (maxpool_10-east) -- node {\mymidarrow} (-1.5+\skipshift,0,0+\skipshift);
+
+\pic[shift={(0,0,0)}] at (-1.5+\skipshift,0,0+\skipshift) 
+    {Box={
+        name=conv1d_11,
+        caption=Conv stack 2,
+        xlabel={{"16@1x10", }},
+        zlabel=,
+        fill=\ConvColor,
+        height=2,
+        width=12,
+        depth=6,
+        opacity=0.7,
+        }
+    };
+
+\pic[shift={(0,0,0)}] at (conv1d_11-east)
+    {Box={
+        name=batch_norm_11,
+        caption=,
+        xlabel={{, }},
+        zlabel=,
+        fill=color1,
+        height=2,
+        width=2,
+        depth=6,
+        opacity=0.7,
+        }
+    };
+
+\pic[shift={(0,0,0)}] at (batch_norm_11-east)
+    {Box={
+        name=relu_11,
+        caption=,
+        xlabel={{, }},
+        zlabel=16,
+        fill=color2,
+        height=2,
+        width=2,
+        depth=6,
+        opacity=0.7,
+        }
+    };
+
+\pic[shift={(0,0,0)}] at (relu_11-east)
+    {Box={
+        name=dropout_11,
+        caption=,
+        xlabel={{, }},
+        zlabel=,
+        fill=color1,
+        height=2,
+        width=2,
+        depth=6,
+        opacity=0.7,
+        }
+    };
+
+\pic[shift={ (0,0,0) }] at (dropout_11-east) 
+    {Box={
+        name=maxpool_11,
+        caption= ,
+        xlabel={{"1x4",}},
+        zlabel=1,
+        fill=color_pool,
+        opacity=0.7,
+        height=2,
+        width=2,
+        depth=2
+        }
+    };
+
+\draw [connection]  (maxpool_11-east) -- node {\mymidarrow} (4.0+\skipshift,0,0+\skipshift);
+
+\pic[shift={(0,0,0)}] at (4.0+\skipshift,0,0+\skipshift)
+    {Box={
+        name=flatten_12,
+        caption=Flatten 1,
+        xlabel={{, }},
+        zlabel=16,
+        fill=\ConvColor,
+        height=2,
+        width=2,
+        depth=16,
+        opacity=0.7,
+        }
+    };
+
+\draw [connection]  (flatten_12-east) -- node {\mymidarrow} (6.0+\skipshift,0,0+\skipshift);
+
+\pic[shift={(0,0,0)}] at (6.0+\skipshift,0,0+\skipshift)
+    {Box={
+        name=dense_13,
+        caption=,
+        xlabel={{, }},
+        zlabel=,
+        fill=\ConvColor,
+        height=2,
+        width=2,
+        depth=32,
+        opacity=0.7,
+        }
+    };
+
+\pic[shift={(0,0,0)}] at (dense_13-east)
+    {Box={
+        name=batch_norm_13,
+        caption=Dense stack 1,
+        xlabel={{, }},
+        zlabel=,
+        fill=color1,
+        height=2,
+        width=2,
+        depth=32,
+        opacity=0.7,
+        }
+    };
+
+\pic[shift={(0,0,0)}] at (batch_norm_13-east)
+    {Box={
+        name=relu_13,
+        caption=,
+        xlabel={{, }},
+        zlabel=,
+        fill=color2,
+        height=2,
+        width=2,
+        depth=32,
+        opacity=0.7,
+        }
+    };
+
+\pic[shift={(0,0,0)}] at (relu_13-east)
+    {Box={
+        name=dropout_13,
+        caption=,
+        xlabel={{, }},
+        zlabel=32,
+        fill=color1,
+        height=2,
+        width=2,
+        depth=32,
+        opacity=0.7,
+        }
+    };
+
+\draw [connection]  (dropout_13-east) -- node {\mymidarrow} (9.0+\skipshift,0,0+\skipshift);
+
+\pic[shift={(0,0,0)}] at (9.0+\skipshift,0,0+\skipshift)
+    {Box={
+        name=dense_14,
+        caption=Dense stack 2,
+        xlabel={{, }},
+        zlabel=,
+        fill=\ConvColor,
+        height=2,
+        width=2,
+        depth=8,
+        opacity=0.7,
+        }
+    };
+
+\pic[shift={(0,0,0)}] at (dense_14-east)
+    {Box={
+        name=batch_norm_14,
+        caption=,
+        xlabel={{, }},
+        zlabel=,
+        fill=color1,
+        height=2,
+        width=2,
+        depth=8,
+        opacity=0.7,
+        }
+    };
+
+\pic[shift={(0,0,0)}] at (batch_norm_14-east)
+    {Box={
+        name=relu_14,
+        caption=,
+        xlabel={{, }},
+        zlabel=,
+        fill=color2,
+        height=2,
+        width=2,
+        depth=8,
+        opacity=0.7,
+        }
+    };
+
+\pic[shift={(0,0,0)}] at (relu_14-east)
+    {Box={
+        name=dropout_14,
+        caption=,
+        xlabel={{, }},
+        zlabel=8,
+        fill=color1,
+        height=2,
+        width=2,
+        depth=8,
+        opacity=0.7,
+        }
+    };
+
+\pic[shift={(0,0,0)}] at (-5.5+\skipshift,0,13+\skipshift) 
+    {Box={
+        name=conv1d_5,
+        caption=Conv stack 3,
+        xlabel={{"8@1x5", }},
+        zlabel=,
+        fill=\ConvColor,
+        height=2,
+        width=6,
+        depth=32,
+        opacity=0.7,
+        }
+    };
+
+\pic[shift={(0,0,0)}] at (conv1d_5-east)
+    {Box={
+        name=batch_norm_5,
+        caption=,
+        xlabel={{, }},
+        zlabel=,
+        fill=color1,
+        height=2,
+        width=2,
+        depth=32,
+        opacity=0.7,
+        }
+    };
+
+\pic[shift={(0,0,0)}] at (batch_norm_5-east)
+    {Box={
+        name=relu_5,
+        caption=,
+        xlabel={{, }},
+        zlabel=,
+        fill=color2,
+        height=2,
+        width=2,
+        depth=32,
+        opacity=0.7,
+        }
+    };
+
+\pic[shift={(0,0,0)}] at (relu_5-east)
+    {Box={
+        name=dropout_5,
+        caption=,
+        xlabel={{, }},
+        zlabel=32,
+        fill=color1,
+        height=2,
+        width=2,
+        depth=32,
+        opacity=0.7,
+        }
+    };
+
+\pic[shift={ (0,0,0) }] at (dropout_5-east) 
+    {Box={
+        name=maxpool_5,
+        caption= ,
+        xlabel={{"1x2",}},
+        zlabel=16,
+        fill=color_pool,
+        opacity=0.7,
+        height=2,
+        width=2,
+        depth=16
+        }
+    };
+
+\draw [connection]  (maxpool_5-east) -- node {\mymidarrow} (-1.5+\skipshift,0,13+\skipshift);
+
+\pic[shift={(0,0,0)}] at (-1.5+\skipshift,0,13+\skipshift) 
+    {Box={
+        name=conv1d_6,
+        caption=Conv stack 4,
+        xlabel={{"16@1x10", }},
+        zlabel=,
+        fill=\ConvColor,
+        height=2,
+        width=12,
+        depth=16,
+        opacity=0.7,
+        }
+    };
+
+\pic[shift={(0,0,0)}] at (conv1d_6-east)
+    {Box={
+        name=batch_norm_6,
+        caption=,
+        xlabel={{, }},
+        zlabel=,
+        fill=color1,
+        height=2,
+        width=2,
+        depth=16,
+        opacity=0.7,
+        }
+    };
+
+\pic[shift={(0,0,0)}] at (batch_norm_6-east)
+    {Box={
+        name=relu_6,
+        caption=,
+        xlabel={{, }},
+        zlabel=,
+        fill=color2,
+        height=2,
+        width=2,
+        depth=16,
+        opacity=0.7,
+        }
+    };
+
+\pic[shift={(0,0,0)}] at (relu_6-east)
+    {Box={
+        name=dropout_6,
+        caption=,
+        xlabel={{, }},
+        zlabel=16,
+        fill=color1,
+        height=2,
+        width=2,
+        depth=16,
+        opacity=0.7,
+        }
+    };
+
+\pic[shift={ (0,0,0) }] at (dropout_6-east) 
+    {Box={
+        name=maxpool_6,
+        caption= ,
+        xlabel={{"1x2",}},
+        zlabel=8,
+        fill=color_pool,
+        opacity=0.7,
+        height=2,
+        width=2,
+        depth=8
+        }
+    };
+
+\draw [connection]  (maxpool_6-east) -- node {\mymidarrow} (4.0+\skipshift,0,13+\skipshift);
+
+\pic[shift={(0,0,0)}] at (4.0+\skipshift,0,13+\skipshift)
+    {Box={
+        name=flatten_7,
+        caption=Flatten 2,
+        xlabel={{, }},
+        zlabel=128,
+        fill=\ConvColor,
+        height=2,
+        width=2,
+        depth=48,
+        opacity=0.7,
+        }
+    };
+
+\draw [connection]  (flatten_7-east) -- node {\mymidarrow} (6.0+\skipshift,0,13+\skipshift);
+
+\pic[shift={(0,0,0)}] at (6.0+\skipshift,0,13+\skipshift)
+    {Box={
+        name=dense_8,
+        caption=,
+        xlabel={{, }},
+        zlabel=,
+        fill=\ConvColor,
+        height=2,
+        width=2,
+        depth=32,
+        opacity=0.7,
+        }
+    };
+
+\pic[shift={(0,0,0)}] at (dense_8-east)
+    {Box={
+        name=batch_norm_8,
+        caption=Dense stack 3,
+        xlabel={{, }},
+        zlabel=,
+        fill=color1,
+        height=2,
+        width=2,
+        depth=32,
+        opacity=0.7,
+        }
+    };
+
+\pic[shift={(0,0,0)}] at (batch_norm_8-east)
+    {Box={
+        name=relu_8,
+        caption=,
+        xlabel={{, }},
+        zlabel=,
+        fill=color2,
+        height=2,
+        width=2,
+        depth=32,
+        opacity=0.7,
+        }
+    };
+
+\pic[shift={(0,0,0)}] at (relu_8-east)
+    {Box={
+        name=dropout_8,
+        caption=,
+        xlabel={{, }},
+        zlabel=32,
+        fill=color1,
+        height=2,
+        width=2,
+        depth=32,
+        opacity=0.7,
+        }
+    };
+
+\draw [connection]  (dropout_8-east) -- node {\mymidarrow} (9.0+\skipshift,0,13+\skipshift);
+
+\pic[shift={(0,0,0)}] at (9.0+\skipshift,0,13+\skipshift)
+    {Box={
+        name=dense_9,
+        caption=Dense stack 4,
+        xlabel={{, }},
+        zlabel=,
+        fill=\ConvColor,
+        height=2,
+        width=2,
+        depth=8,
+        opacity=0.7,
+        }
+    };
+
+\pic[shift={(0,0,0)}] at (dense_9-east)
+    {Box={
+        name=batch_norm_9,
+        caption=,
+        xlabel={{, }},
+        zlabel=,
+        fill=color1,
+        height=2,
+        width=2,
+        depth=8,
+        opacity=0.7,
+        }
+    };
+
+\pic[shift={(0,0,0)}] at (batch_norm_9-east)
+    {Box={
+        name=relu_9,
+        caption=,
+        xlabel={{, }},
+        zlabel=,
+        fill=color2,
+        height=2,
+        width=2,
+        depth=8,
+        opacity=0.7,
+        }
+    };
+
+\pic[shift={(0,0,0)}] at (relu_9-east)
+    {Box={
+        name=dropout_9,
+        caption=,
+        xlabel={{, }},
+        zlabel=8,
+        fill=color1,
+        height=2,
+        width=2,
+        depth=8,
+        opacity=0.7,
+        }
+    };
+
+\pic[shift={(0,0,0)}] at (0.0+\skipshift,0,28+\skipshift)
+    {Box={
+        name=dense_1,
+        caption=,
+        xlabel={{, }},
+        zlabel=,
+        fill=\ConvColor,
+        height=2,
+        width=2,
+        depth=34,
+        opacity=0.7,
+        }
+    };
+
+\pic[shift={(0,0,0)}] at (dense_1-east)
+    {Box={
+        name=batch_norm_1,
+        caption=Dense stack 5,
+        xlabel={{, }},
+        zlabel=,
+        fill=color1,
+        height=2,
+        width=2,
+        depth=34,
+        opacity=0.7,
+        }
+    };
+
+\pic[shift={(0,0,0)}] at (batch_norm_1-east)
+    {Box={
+        name=relu_1,
+        caption=,
+        xlabel={{, }},
+        zlabel=,
+        fill=color2,
+        height=2,
+        width=2,
+        depth=34,
+        opacity=0.7,
+        }
+    };
+
+\pic[shift={(0,0,0)}] at (relu_1-east)
+    {Box={
+        name=dropout_1,
+        caption=,
+        xlabel={{, }},
+        zlabel=34,
+        fill=color1,
+        height=2,
+        width=2,
+        depth=34,
+        opacity=0.7,
+        }
+    };
+
+\draw [connection]  (dropout_1-east) -- node {\mymidarrow} (3.0+\skipshift,0,28+\skipshift);
+
+\pic[shift={(0,0,0)}] at (3.0+\skipshift,0,28+\skipshift)
+    {Box={
+        name=dense_2,
+        caption=,
+        xlabel={{, }},
+        zlabel=,
+        fill=\ConvColor,
+        height=2,
+        width=2,
+        depth=38,
+        opacity=0.7,
+        }
+    };
+
+\pic[shift={(0,0,0)}] at (dense_2-east)
+    {Box={
+        name=batch_norm_2,
+        caption=Dense stack 6,
+        xlabel={{, }},
+        zlabel=,
+        fill=color1,
+        height=2,
+        width=2,
+        depth=38,
+        opacity=0.7,
+        }
+    };
+
+\pic[shift={(0,0,0)}] at (batch_norm_2-east)
+    {Box={
+        name=relu_2,
+        caption=,
+        xlabel={{, }},
+        zlabel=,
+        fill=color2,
+        height=2,
+        width=2,
+        depth=38,
+        opacity=0.7,
+        }
+    };
+
+\pic[shift={(0,0,0)}] at (relu_2-east)
+    {Box={
+        name=dropout_2,
+        caption=,
+        xlabel={{, }},
+        zlabel=38,
+        fill=color1,
+        height=2,
+        width=2,
+        depth=38,
+        opacity=0.7,
+        }
+    };
+
+\draw [connection]  (dropout_2-east) -- node {\mymidarrow} (6.0+\skipshift,0,28+\skipshift);
+
+\pic[shift={(0,0,0)}] at (6.0+\skipshift,0,28+\skipshift)
+    {Box={
+        name=dense_3,
+        caption=,
+        xlabel={{, }},
+        zlabel=,
+        fill=\ConvColor,
+        height=2,
+        width=2,
+        depth=38,
+        opacity=0.7,
+        }
+    };
+
+\pic[shift={(0,0,0)}] at (dense_3-east)
+    {Box={
+        name=batch_norm_3,
+        caption=Dense stack 7,
+        xlabel={{, }},
+        zlabel=,
+        fill=color1,
+        height=2,
+        width=2,
+        depth=38,
+        opacity=0.7,
+        }
+    };
+
+\pic[shift={(0,0,0)}] at (batch_norm_3-east)
+    {Box={
+        name=relu_3,
+        caption=,
+        xlabel={{, }},
+        zlabel=,
+        fill=color2,
+        height=2,
+        width=2,
+        depth=38,
+        opacity=0.7,
+        }
+    };
+
+\pic[shift={(0,0,0)}] at (relu_3-east)
+    {Box={
+        name=dropout_3,
+        caption=,
+        xlabel={{, }},
+        zlabel=38,
+        fill=color1,
+        height=2,
+        width=2,
+        depth=38,
+        opacity=0.7,
+        }
+    };
+
+\draw [connection]  (dropout_3-east) -- node {\mymidarrow} (9.0+\skipshift,0,28+\skipshift);
+
+\pic[shift={(0,0,0)}] at (9.0+\skipshift,0,28+\skipshift)
+    {Box={
+        name=dense_4,
+        caption=,
+        xlabel={{, }},
+        zlabel=,
+        fill=\ConvColor,
+        height=2,
+        width=2,
+        depth=8,
+        opacity=0.7,
+        }
+    };
+
+\pic[shift={(0,0,0)}] at (dense_4-east)
+    {Box={
+        name=batch_norm_4,
+        caption=Dense stack 8,
+        xlabel={{, }},
+        zlabel=,
+        fill=color1,
+        height=2,
+        width=2,
+        depth=8,
+        opacity=0.7,
+        }
+    };
+
+\pic[shift={(0,0,0)}] at (batch_norm_4-east)
+    {Box={
+        name=relu_4,
+        caption=,
+        xlabel={{, }},
+        zlabel=,
+        fill=color2,
+        height=2,
+        width=2,
+        depth=8,
+        opacity=0.7,
+        }
+    };
+
+\pic[shift={(0,0,0)}] at (relu_4-east)
+    {Box={
+        name=dropout_4,
+        caption=,
+        xlabel={{, }},
+        zlabel=8,
+        fill=color1,
+        height=2,
+        width=2,
+        depth=8,
+        opacity=0.7,
+        }
+    };
+
+\node[mynode] (right plus) at (11.5+\skipshift,0,28+\skipshift) {};
+
+\node[mynode] (right spec) at (11.5+\skipshift,0,13+\skipshift) {};
+
+\node[mynode] (right liti) at (11.5+\skipshift,0,0+\skipshift) {};
+
+\draw [connection] (dropout_14-east) -- node{\mymidarrow} (right liti) -- node{\mymidarrow} (right spec);
+
+\draw [connection] (dropout_9-east) -- node{\mymidarrow} (right spec) -- node{\mymidarrow} (13.0+\skipshift,0,13+\skipshift);
+
+\draw [connection] (dropout_4-east) -- node{\mymidarrow} (right plus) -- node{\mymidarrow} (right spec);
+
+\pic[shift={(0,0,0)}] at (13.0+\skipshift,0,13+\skipshift)
+    {Box={
+        name=dense_9,
+        caption= ,
+        xlabel={{, }},
+        zlabel=,
+        fill=\ConvColor,
+        height=2,
+        width=2,
+        depth=8,
+        opacity=0.7,
+        }
+    };
+
+\pic[shift={(0,0,0)}] at (dense_9-east)
+    {Box={
+        name=dense_10,
+        caption=Mixing stack,
+        xlabel={{, }},
+        zlabel=,
+        fill=\ConvColor,
+        height=2,
+        width=2,
+        depth=8,
+        opacity=0.7,
+        }
+    };
+
+\pic[shift={(0,0,0)}] at (dense_10-east)
+    {Box={
+        name=batch_norm_9,
+        caption= ,
+        xlabel={{, }},
+        zlabel=,
+        fill=color1,
+        height=2,
+        width=2,
+        depth=8,
+        opacity=0.7,
+        }
+    };
+
+\pic[shift={(0,0,0)}] at (batch_norm_9-east)
+    {Box={
+        name=softmax_1,
+        caption= ,
+        xlabel={{, }},
+        zlabel=8,
+        fill=forestgreen,
+        height=2,
+        width=2,
+        depth=8,
+        opacity=0.7,
+        }
+    };
+
+\end{tikzpicture}
+\end{document}
