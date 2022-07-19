@@ -27,30 +27,30 @@
 \tikzstyle{connection}=[ultra thick,every node/.style={sloped,allow upside down},draw=\edgecolor,opacity=0.7]
 \tikzstyle{copyconnection}=[ultra thick,every node/.style={sloped,allow upside down},draw={rgb:blue,4;red,1;green,1;black,3},opacity=0.7]
 
-\pic[shift={(0,0,0)}] at (0,0,0)
+\pic[shift={(0,0,0)}] at (0,0,0) 
     {Box={
-        name=dense,
-        caption=,
-        xlabel={{, }},
+        name=conv1d,
+        caption=Conv stack 1,
+        xlabel={{"8@1x5", }},
         zlabel=,
         fill=\ConvColor,
         height=2,
-        width=2,
-        depth=34,
+        width=6,
+        depth=24,
         opacity=0.7,
         }
     };
 
-\pic[shift={(0,0,0)}] at (dense-east)
+\pic[shift={(0,0,0)}] at (conv1d-east)
     {Box={
         name=batch_norm,
-        caption=Dense stack 1,
+        caption=,
         xlabel={{, }},
         zlabel=,
         fill=color1,
         height=2,
         width=2,
-        depth=34,
+        depth=24,
         opacity=0.7,
         }
     };
@@ -64,7 +64,7 @@
         fill=color2,
         height=2,
         width=2,
-        depth=34,
+        depth=24,
         opacity=0.7,
         }
     };
@@ -74,41 +74,55 @@
         name=dropout,
         caption=,
         xlabel={{, }},
-        zlabel=34,
+        zlabel=24,
         fill=color1,
         height=2,
         width=2,
-        depth=34,
+        depth=24,
         opacity=0.7,
         }
     };
 
-\draw [connection]  (dropout-east) -- node {\mymidarrow} (3,0,0);
-
-\pic[shift={(0,0,0)}] at (3,0,0)
+\pic[shift={ (0,0,0) }] at (dropout-east) 
     {Box={
-        name=dense_1,
-        caption=,
-        xlabel={{, }},
+        name=maxpool,
+        caption= ,
+        xlabel={{"1x4",}},
+        zlabel=6,
+        fill=\PoolColor,
+        opacity=0.7,
+        height=2,
+        width=2,
+        depth=6
+        }
+    };
+
+\draw [connection]  (maxpool-east) -- node {\mymidarrow} (4,0,0);
+
+\pic[shift={(0,0,0)}] at (4,0,0) 
+    {Box={
+        name=conv1d_1,
+        caption=Conv stack 2,
+        xlabel={{"16@1x10", }},
         zlabel=,
         fill=\ConvColor,
         height=2,
-        width=2,
-        depth=38,
+        width=12,
+        depth=6,
         opacity=0.7,
         }
     };
 
-\pic[shift={(0,0,0)}] at (dense_1-east)
+\pic[shift={(0,0,0)}] at (conv1d_1-east)
     {Box={
         name=batch_norm_1,
-        caption=Dense stack 2,
+        caption=,
         xlabel={{, }},
         zlabel=,
         fill=color1,
         height=2,
         width=2,
-        depth=38,
+        depth=6,
         opacity=0.7,
         }
     };
@@ -118,11 +132,11 @@
         name=relu_1,
         caption=,
         xlabel={{, }},
-        zlabel=,
+        zlabel=16,
         fill=color2,
         height=2,
         width=2,
-        depth=38,
+        depth=6,
         opacity=0.7,
         }
     };
@@ -132,41 +146,71 @@
         name=dropout_1,
         caption=,
         xlabel={{, }},
-        zlabel=38,
+        zlabel=,
         fill=color1,
         height=2,
         width=2,
-        depth=38,
+        depth=6,
         opacity=0.7,
         }
     };
 
-\draw [connection]  (dropout_1-east) -- node {\mymidarrow} (6,0,0);
-
-\pic[shift={(0,0,0)}] at (6,0,0)
+\pic[shift={ (0,0,0) }] at (dropout_1-east) 
     {Box={
-        name=dense_2,
-        caption=,
+        name=maxpool,
+        caption= ,
+        xlabel={{"1x4",}},
+        zlabel=1,
+        fill=\PoolColor,
+        opacity=0.7,
+        height=2,
+        width=2,
+        depth=2
+        }
+    };
+
+\draw [connection]  (maxpool-east) -- node {\mymidarrow} (9.5,0,0);
+
+\pic[shift={(0,0,0)}] at (9.5,0,0)
+    {Box={
+        name=flatten,
+        caption=Flatten,
+        xlabel={{, }},
+        zlabel=16,
+        fill=\ConvColor,
+        height=2,
+        width=2,
+        depth=16,
+        opacity=0.7,
+        }
+    };
+
+\draw [connection]  (flatten-east) -- node {\mymidarrow} (11.5,0,0);
+
+\pic[shift={(0,0,0)}] at (11.5,0,0)
+    {Box={
+        name=dense,
+        caption=Dense stack 1,
         xlabel={{, }},
         zlabel=,
         fill=\ConvColor,
         height=2,
         width=2,
-        depth=38,
+        depth=32,
         opacity=0.7,
         }
     };
 
-\pic[shift={(0,0,0)}] at (dense_2-east)
+\pic[shift={(0,0,0)}] at (dense-east)
     {Box={
         name=batch_norm_2,
-        caption=Dense stack 3,
+        caption=,
         xlabel={{, }},
         zlabel=,
         fill=color1,
         height=2,
         width=2,
-        depth=38,
+        depth=32,
         opacity=0.7,
         }
     };
@@ -180,7 +224,7 @@
         fill=color2,
         height=2,
         width=2,
-        depth=38,
+        depth=32,
         opacity=0.7,
         }
     };
@@ -190,21 +234,21 @@
         name=dropout_2,
         caption=,
         xlabel={{, }},
-        zlabel=38,
+        zlabel=32,
         fill=color1,
         height=2,
         width=2,
-        depth=38,
+        depth=32,
         opacity=0.7,
         }
     };
 
-\draw [connection]  (dropout_2-east) -- node {\mymidarrow} (9,0,0);
+\draw [connection]  (dropout_2-east) -- node {\mymidarrow} (14.5,0,0);
 
-\pic[shift={(0,0,0)}] at (9,0,0)
+\pic[shift={(0,0,0)}] at (14.5,0,0)
     {Box={
-        name=dense_3,
-        caption=,
+        name=dense_1,
+        caption=Dense stack 2,
         xlabel={{, }},
         zlabel=,
         fill=\ConvColor,
@@ -215,10 +259,10 @@
         }
     };
 
-\pic[shift={(0,0,0)}] at (dense_3-east)
+\pic[shift={(0,0,0)}] at (dense_1-east)
     {Box={
         name=batch_norm_3,
-        caption=Dense stack 4,
+        caption=,
         xlabel={{, }},
         zlabel=,
         fill=color1,
