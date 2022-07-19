@@ -1,4 +1,5 @@
 import os
+from typing import Sequence
 
 def to_head( projectpath):
     pathlayers = os.path.join( projectpath, 'layers/' ).replace('\\', '/')
@@ -47,8 +48,21 @@ def node(name, coords, text=""):
 """
 
 def gen_nodes(n_nodes, xspace=3):
+    """
+    Genarate a set of consecutive `n_nodes` with
+    a distance between them of `xspace`.
+    """
     nodex = [*range(n_nodes)]
-    return {chr(ord('a') + i): f"({xspace*i},0,0)" for i in nodex}
+    if isinstance(xspace, int):
+        return {chr(ord('a') + i): f"({xspace*i},0,0)" for i in nodex}
+    elif isinstance(xspace, Sequence):
+        return dict(
+            (chr(ord('a') + i), f"({xspace[i]+sum(xspace[:i])},0,0)")
+            if i >= 1 else
+            (chr(ord('a') + i), f"({xspace[i]},0,0)")
+            for i in nodex)
+    else:
+        raise TypeError(f"`xspace` must be either int or Sequence, not {type(xspace)}")
 
 # layers definition
 # =================
@@ -58,7 +72,7 @@ def to_input( pathfile, to='(-3,0,0)', width=8, height=8, name="temp"):
 """
 
 # Dense
-def to_Dense(name, size=64, offset="(0,0,0)", to="(0,0,0)", width=2, height=2, depth=34, caption=" ", opacity=.8):
+def to_Dense(name, size=64, offset="(0,0,0)", to="(0,0,0)", width=2, height=2, depth=34, caption=" ", opacity=.7):
     return r"""
 \pic[shift={"""+ offset +"""}] at """+ to +"""
     {Box={
@@ -76,7 +90,7 @@ def to_Dense(name, size=64, offset="(0,0,0)", to="(0,0,0)", width=2, height=2, d
 """
 
 # Conv
-def to_Conv(name, s_filter=256, n_filter=64, size=32, offset="(0,0,0)", to="(0,0,0)", width=4, height=25, depth=40, caption=" ", opacity=.8):
+def to_Conv(name, s_filter=256, n_filter=64, size=32, offset="(0,0,0)", to="(0,0,0)", width=4, height=25, depth=40, caption=" ", opacity=.7):
     return r"""
 \pic[shift={"""+ offset +"""}] at """+ to +""" 
     {Box={
@@ -113,18 +127,19 @@ def to_ConvConvRelu(name, s_filter=256, n_filter=(64,64), offset="(0,0,0)", to="
 """
 
 # Pool
-def to_Pool(name, size=32, offset="(0,0,0)", to="(0,0,0)", width=1, height=32, depth=32, opacity=.8, caption=" "):
+def to_Pool(name, s_pool=8, size=32, offset="(0,0,0)", to="(0,0,0)", width=1, height=32, depth=32, opacity=.7, caption=" "):
     return r"""
 \pic[shift={ """+ offset +""" }] at """+ to +""" 
     {Box={
-        name="""   + name         +""",
-        caption="""+ caption      +r""",
-        zlabel=""" + str(size)    +""",
+        name="""   + name           +""",
+        caption="""+ caption        +r""",
+        xlabel={{"1x"""+ str(s_pool) +"""\",}},
+        zlabel=""" + str(size)      +""",
         fill=\PoolColor,
-        opacity="""+ str(opacity) +""",
-        height=""" + str(height)  +""",
-        width="""  + str(width)   +""",
-        depth="""  + str(depth)   +"""
+        opacity="""+ str(opacity)   +""",
+        height=""" + str(height)    +""",
+        width="""  + str(width)     +""",
+        depth="""  + str(depth)     +"""
         }
     };
 """
@@ -211,7 +226,7 @@ def to_Sum(name, offset="(0,0,0)", to="(0,0,0)", radius=2.5, opacity=0.6):
     };
 """
 
-def to_connection( of, to):
+def to_connection(of, to):
     return r"""
 \draw [connection]  ("""+of+"""-east) -- node {\midarrow} ("""+to+"""-west);
 """
@@ -221,7 +236,7 @@ def to_connection_node(of, to):
 \draw [connection]  ("""+of+"""-east) -- node {\mymidarrow} """+to+""";
 """
 
-def to_skip( of, to, pos=1.25):
+def to_skip(of, to, pos=1.25):
     return r"""
 \path ("""+ of +"""-southeast) -- ("""+ of +"""-northeast) coordinate[pos="""+ str(pos) +"""] ("""+ of +"""-top) ;
 \path ("""+ to +"""-south)  -- ("""+ to +"""-north)  coordinate[pos="""+ str(pos) +"""] ("""+ to +"""-top) ;
