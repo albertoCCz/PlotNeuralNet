@@ -45,6 +45,11 @@ def new_color(name, color):
 \definecolor{""" + name + r"""}{HTML}{""" + color + r"""}
 """
 
+def insert_canvas_image(file_name, node, width, height):
+    return r"""
+\node[canvas is zy plane at x=0] (temp) at """+ node +""" {\includegraphics[width="""+ str(width) +"""cm,height="""+ str(height) +"""cm]{"""+ file_name +"""}};
+"""
+
 def node(name, coords, text=""):
     return r"""
 \node ("""+ name +""") at """+ coords +""" {"""+ text +"""};
@@ -68,7 +73,7 @@ def gen_nodes(n_nodes, xspace=3, zoffset=0):
     else:
         raise TypeError(f"`xspace` must be either int or Sequence, not {type(xspace)}")
 
-def apply_offset(offset, coord, nodes):
+def apply_offset(offset: float, coord: str, nodes: dict):
     coord_index = {'x':0, 'y':1, 'z':2}[coord]
     for k,v in nodes.items():
         pos_list = v.strip('()').split(',')
@@ -119,15 +124,15 @@ def to_Dense(name, size=64, offset="(0,0,0)", to="(0,0,0)", width=2, height=2, d
 """
 
 # Conv
-def to_Conv(name, s_filter=256, n_filter=64, size=32, offset="(0,0,0)", to="(0,0,0)", width=4, height=25, depth=40, caption=" ", opacity=.7):
+def to_Conv(name, s_filter=256, n_filter=64, size=32, offset="(0,0,0)", to="(0,0,0)", width=4, height=25, depth=40, caption=" ", color="\ConvColor", opacity=.7):
     return r"""
 \pic[shift={"""+ offset +"""}] at """+ to +""" 
     {Box={
         name="""    + name          +""",
         caption=""" + caption       +r""",
         xlabel={{"""+ '"' + str(n_filter) +"""@1x"""+ str(s_filter) +"""\", }},
-        zlabel="""  + str(size)  +""",
-        fill=\ConvColor,
+        zlabel="""  + str(size)     +r""",
+        fill="""    + str(color)    +""",
         height="""  + str(height)   +""",
         width="""   + str(width)    +""",
         depth="""   + str(depth)    +""",
