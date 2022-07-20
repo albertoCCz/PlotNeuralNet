@@ -18,6 +18,9 @@ Following are some network representations:
 <p align="center"><img  src="https://user-images.githubusercontent.com/17570785/50308911-03b3c380-049d-11e9-92d9-ce15669017ad.png" width="85%" height="85%"></p>
 <h6 align="center">Holistically-Nested Edge Detection (<a href="https://www.overleaf.com/read/jxhnkcnwhfxp">view on Overleaf</a>)</h6>
 
+<p align="center"><img  src="my-nets/com_model.jpg" width="85%" height="85%"></p>
+<h6 align="center">my-nets/com_model (<a href="https://www.overleaf.com/read/yjcrxnwjhnng">view on Overleaf</a>)</h6>
+
 ## Getting Started
 1. Install the following packages on Ubuntu.
     * Ubuntu 16.04
