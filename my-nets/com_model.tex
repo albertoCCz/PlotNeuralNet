@@ -21,9 +21,15 @@
 
 \definecolor{color_pool}{HTML}{F44724}
 
+\definecolor{flatten}{HTML}{D079F9}
+
+\definecolor{conv_color}{HTML}{F1941D}
+
 \definecolor{dark_yellow}{HTML}{F9D046}
 
 \definecolor{forestgreen}{HTML}{24BB09}
+
+\definecolor{superdarkgreen}{HTML}{14A616}
 
 \newcommand{\mymidarrow}{\tikz \draw[-Stealth,line width=0.2mm,draw=\edgecolor,opacity=1] (-0.3,0) -- ++(0.3,0);}
 
@@ -36,13 +42,19 @@
 
 \def\skipshift{6.5}
 
+\node[canvas is zy plane at x=0] (temp) at (-8.0+\skipshift,0,0+\skipshift) {\includegraphics[width=7cm,height=3.5cm]{images/lifetime_mirror.jpg}};
+
+\node[canvas is zy plane at x=0] (temp) at (-8.0+\skipshift,0,13+\skipshift) {\includegraphics[width=7cm,height=3.5cm]{images/fluorescence_spectrum_mirror.jpg}};
+
+\node[canvas is zy plane at x=0] (temp) at (-2.5+\skipshift,0,28+\skipshift) {\includegraphics[width=7cm,height=3.5cm]{images/plus_features_mirror.jpg}};
+
 \pic[shift={(0,0,0)}] at (-5.5+\skipshift,0,0+\skipshift) 
     {Box={
         name=conv1d_10,
         caption=Conv stack 1,
         xlabel={{"8@1x5", }},
         zlabel=,
-        fill=\ConvColor,
+        fill=conv_color,
         height=2,
         width=6,
         depth=24,
@@ -114,7 +126,7 @@
         caption=Conv stack 2,
         xlabel={{"16@1x10", }},
         zlabel=,
-        fill=\ConvColor,
+        fill=conv_color,
         height=2,
         width=12,
         depth=6,
@@ -186,7 +198,7 @@
         caption=Flatten 1,
         xlabel={{, }},
         zlabel=16,
-        fill=\ConvColor,
+        fill=flatten,
         height=2,
         width=2,
         depth=16,
@@ -202,7 +214,7 @@
         caption=,
         xlabel={{, }},
         zlabel=,
-        fill=\ConvColor,
+        fill=superdarkgreen,
         height=2,
         width=2,
         depth=32,
@@ -260,7 +272,7 @@
         caption=Dense stack 2,
         xlabel={{, }},
         zlabel=,
-        fill=\ConvColor,
+        fill=superdarkgreen,
         height=2,
         width=2,
         depth=8,
@@ -316,7 +328,7 @@
         caption=Conv stack 3,
         xlabel={{"8@1x5", }},
         zlabel=,
-        fill=\ConvColor,
+        fill=conv_color,
         height=2,
         width=6,
         depth=32,
@@ -388,7 +400,7 @@
         caption=Conv stack 4,
         xlabel={{"16@1x10", }},
         zlabel=,
-        fill=\ConvColor,
+        fill=conv_color,
         height=2,
         width=12,
         depth=16,
@@ -460,7 +472,7 @@
         caption=Flatten 2,
         xlabel={{, }},
         zlabel=128,
-        fill=\ConvColor,
+        fill=flatten,
         height=2,
         width=2,
         depth=48,
@@ -476,7 +488,7 @@
         caption=,
         xlabel={{, }},
         zlabel=,
-        fill=\ConvColor,
+        fill=superdarkgreen,
         height=2,
         width=2,
         depth=32,
@@ -534,7 +546,7 @@
         caption=Dense stack 4,
         xlabel={{, }},
         zlabel=,
-        fill=\ConvColor,
+        fill=superdarkgreen,
         height=2,
         width=2,
         depth=8,
@@ -590,7 +602,7 @@
         caption=,
         xlabel={{, }},
         zlabel=,
-        fill=\ConvColor,
+        fill=superdarkgreen,
         height=2,
         width=2,
         depth=34,
@@ -648,7 +660,7 @@
         caption=,
         xlabel={{, }},
         zlabel=,
-        fill=\ConvColor,
+        fill=superdarkgreen,
         height=2,
         width=2,
         depth=38,
@@ -706,7 +718,7 @@
         caption=,
         xlabel={{, }},
         zlabel=,
-        fill=\ConvColor,
+        fill=superdarkgreen,
         height=2,
         width=2,
         depth=38,
@@ -764,7 +776,7 @@
         caption=,
         xlabel={{, }},
         zlabel=,
-        fill=\ConvColor,
+        fill=superdarkgreen,
         height=2,
         width=2,
         depth=8,
@@ -832,7 +844,7 @@
         caption= ,
         xlabel={{, }},
         zlabel=,
-        fill=\ConvColor,
+        fill=superdarkgreen,
         height=2,
         width=2,
         depth=8,
@@ -846,7 +858,7 @@
         caption=Mixing stack,
         xlabel={{, }},
         zlabel=,
-        fill=\ConvColor,
+        fill=superdarkgreen,
         height=2,
         width=2,
         depth=8,
@@ -874,7 +886,7 @@
         caption= ,
         xlabel={{, }},
         zlabel=8,
-        fill=forestgreen,
+        fill=\ConvColor,
         height=2,
         width=2,
         depth=8,
